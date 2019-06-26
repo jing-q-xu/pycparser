@@ -99,5 +99,5 @@ class TypeVisitor(c_ast.NodeVisitor):
 
 
 if __name__ == '__main__':
-    ast = CHeaderParser().parse("./struct.h")
-    TypeVisitor().visit(ast)
+    a_s_t = CHeaderParser().parse("./struct.h")
+    TypeVisitor().visit(a_s_t)
