@@ -56,18 +56,40 @@ text = r"""
     }
 """
 
+header = r"""
+static const int MAX_BUF_SIZE = 16;
+
+typedef struct
+{
+    int i;
+    int j;
+} MsgHeader;
+
+typedef struct
+{
+    int flag;
+    char buf[MAX_BUF_SIZE];
+} MsgBody;
+
+typedef struct
+{
+    MsgHeader header;
+    MsgBody body;
+} MsgFrame;
+
+"""
 # Create the parser and ask to parse the text. parse() will throw
 # a ParseError if there's an error in the code
 #
 parser = c_parser.CParser()
-ast = parser.parse(text, filename='<none>')
+ast = parser.parse(header, filename='<none>')
 
 # Uncomment the following line to see the AST in a nice, human
 # readable way. show() is the most useful tool in exploring ASTs
 # created by pycparser. See the c_ast.py file for the options you
 # can pass it.
 
-#ast.show(showcoord=True)
+ast.show()
 
 # OK, we've seen that the top node is FileAST. This is always the
 # top node of the AST. Its children are "external declarations",
@@ -86,7 +108,7 @@ ast = parser.parse(text, filename='<none>')
 # declarations (for K&R style function definitions), and a body.
 # First, let's examine the declaration.
 
-function_decl = ast.ext[2].decl
+# function_decl = ast.ext[2].decl
 
 # function_decl, like any other declaration, is a Decl. Its type child
 # is a FuncDecl, which has a return type and arguments stored in a
@@ -107,7 +129,7 @@ function_decl = ast.ext[2].decl
 # explanation and seeing these things with your own eyes).
 # Let's see the block's declarations:
 
-function_body = ast.ext[2].body
+# function_body = ast.ext[2].body
 
 # The following displays the declarations and statements in the function
 # body
@@ -120,7 +142,7 @@ function_body = ast.ext[2].body
 
 # block_items is a list, so the third element is the For statement:
 
-for_stmt = function_body.block_items[2]
+# for_stmt = function_body.block_items[2]
 #for_stmt.show()
 
 # As you can see in _c_ast.cfg, For's children are 'init, cond,
@@ -130,13 +152,13 @@ for_stmt = function_body.block_items[2]
 #
 # Let's dig deeper, to the while statement inside the for loop:
 
-while_stmt = for_stmt.stmt.block_items[1]
+# while_stmt = for_stmt.stmt.block_items[1]
 #while_stmt.show()
 
 # While is simpler, it only has a condition node and a stmt node.
 # The condition:
 
-while_cond = while_stmt.cond
+# while_cond = while_stmt.cond
 #while_cond.show()
 
 # Note that it's a BinaryOp node - the basic constituent of

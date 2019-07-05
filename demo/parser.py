@@ -14,7 +14,8 @@ class CHeaderParser(object):
         a_s_t = None
         try:
             print("C header file is %s" % CHeaderFile)
-            a_s_t = parse_file(CHeaderFile)
+            a_s_t = parse_file(CHeaderFile, use_cpp=True,cpp_path='gcc', cpp_args=['-E'])
+            # a_s_t = parse_file(CHeaderFile)
             if self.debug: a_s_t.show(attrnames=True, nodenames=True, showcoord=False)
         except Exception:
             print("parse_file %s failed!" % CHeaderFile)
@@ -90,6 +91,9 @@ class TypeVisitor(c_ast.NodeVisitor):
             node. Implements preorder visiting of the node.
         """
         print("generic_visit node")
+        if type(node) is type(None): 
+            print("None type")
+            return
         # print(type(node))
         for c in node:
             self.visit(c)
@@ -98,6 +102,6 @@ class TypeVisitor(c_ast.NodeVisitor):
 
 
 
-if __name__ == '__main__':
-    a_s_t = CHeaderParser().parse("./struct.h")
-    TypeVisitor().visit(a_s_t)
+# if __name__ == '__main__':
+#     a_s_t = CHeaderParser().parse("./struct.h")
+#     TypeVisitor().visit(a_s_t)

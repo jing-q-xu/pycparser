@@ -1,8 +1,20 @@
 
-typedef unsigned int ip_t;
+typedef unsigned int PROC_ID;
+// int i;
+// int j;
 typedef struct __Foo{
 	int a;
-	unsigned int b;
-	char * a_c;
+	PROC_ID id;
 } Foo;
 
+
+// template <typename BODY>
+// struct MsgFrame
+// {
+// 	BODY body;
+// };
+
+// struct FooMsg : MsgFrame<Foo>
+// {
+// 	/* data */
+// };

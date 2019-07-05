@@ -24,4 +24,4 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     ast = parse_file(args.filename, use_cpp=False)
-    ast.show(showcoord=args.coord)
+    ast.show()
