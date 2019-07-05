@@ -25,18 +25,26 @@ class CHeaderParser(object):
     pass
 
 class TypeVisitor(c_ast.NodeVisitor):
-    def __init__(self):
+    def __init__(self, visitor):
+        self.visitor = visitor
         print("Define TypedefVisitor.")
         pass
 
     def visit_Typedef(self, node):
         print("enter visit Typedef node : %s" % node.name)
-        self.visit(node.type)
-        # self._generate_type(node, emit_declname=False)
+       
+        if type(node.type) is type(None): return
+        if type(node.type.type) is type(None): return
+        real_type = node.type.type
+        if isinstance(real_type, c_ast.IdentifierType):
+            typename = ' '.join(real_type.names)
+            self.visitor.visitTypedef(typename, node.name)
+        elif isinstance(real_type, c_ast.Struct):
+            # print(real_type)
+            for decl in real_type.decls: 
+                print(decl)
+            # print (node.type)
         print("leave visit Typedef node : %s" % node.name)
-        # for c in node:
-        #     self.visit(c)
-        # print(node.type)
         pass
 
     def visit_Struct(self, node):
@@ -48,7 +56,7 @@ class TypeVisitor(c_ast.NodeVisitor):
 
     def visit_DeclList(self, node):
         print("visit_DeclList")
-        if type(node.decls) is type(None): pass
+        if type(node.decls) is type(None): return
         for c in node.decls:
             self.visit(c)
         pass

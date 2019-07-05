@@ -3,21 +3,23 @@ import optparse
 
 import parser
 import template
-
+typeAlise = {}
 class HeaderVisitor(object):
     def __init__(self, output):
         self.output = output
 
     def visitStructBegin(self, name):
-        self.output.write(template.def_struct_begin.)
+        self.output.write(template.def_struct_begin.format(name))
     def visitStructEnd(self, name):
-        raise NotImplementedError
+        pass
     def visitTypedef(self, origin, newDefined):
-        raise NotImplementedError
+        typeAlise[newDefined] = origin
+        print(typeAlise)
+        pass
     def visitMember(self, memberType, memberName):
-        raise NotImplementedError
+        pass
     def visitConst(self, memberType, memberName, memberValue):
-        raise NotImplementedError
+        pass
 
 if __name__ == '__main__':
     arg_parser = optparse.OptionParser('%prog [options]')
@@ -27,6 +29,7 @@ if __name__ == '__main__':
     arg_parser.add_option('', '--input-file',  default='msg.h',
                             help='input c++ header file')
 
+    (opts, args) = arg_parser.parse_args()
     a_s_t = parser.CHeaderParser().parse(opts.input_file)
     
     output = open(opts.output_file, 'w')
