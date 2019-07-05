@@ -39,60 +39,37 @@ class TypeVisitor(c_ast.NodeVisitor):
         if isinstance(real_type, c_ast.IdentifierType):
             typename = ' '.join(real_type.names)
             self.visitor.visitTypedef(typename, node.name)
-        elif isinstance(real_type, c_ast.Struct):
             # print(real_type)
-            for decl in real_type.decls: 
-                print(decl)
-            # print (node.type)
+        elif isinstance(real_type, c_ast.Struct):
+            print(node.name)
+            self.visitor.visitStructBegin(node.name)
+            # self.visit(real_type.decls)
+            for decl in real_type.decls:
+                if decl.type is None or decl.type.type is None: continue
+                if isinstance(decl.type, c_ast.TypeDecl):
+                    member_type = ' '.join(decl.type.type.names)
+                    self.visitor.visitStrcutMember(member_type, node.name)
+                elif isinstance(decl.type, c_ast.ArrayDecl):
+                    member_type = ' '.join(decl.type.type.type.names)
+                    print(decl.type)
+                    if hasattr(decl.type.dim, 'value'):
+                        self.visitor.visitStrcutArrayMember(member_type, decl.name, decl.type.dim.value)
+                    elif hasattr(decl.type.dim, 'name'):
+                        self.visitor.visitStrcutArrayMember(member_type, decl.name, decl.type.dim.name)
+            self.visitor.visitStructEnd()
         print("leave visit Typedef node : %s" % node.name)
         pass
 
-    def visit_Struct(self, node):
-        print("visit struct node : %s" % node.name)
-        # self._generate_type(node, emit_declname=False)
-        for c in node:
-            self.visit(c)
-        pass
-
-    def visit_DeclList(self, node):
-        print("visit_DeclList")
-        if type(node.decls) is type(None): return
-        for c in node.decls:
-            self.visit(c)
-        pass
-
-    def visit_Decl(self, node, no_type=False):
+    def visit_Decl(self, decl, no_type=False):
         print("visit_Decl")
-        self.visit(node.type)
-        # print(node.type.names)
-        print(node.name)
+        if decl.type is None or decl.type.type is None or decl.init is None: return
+        if 'const' not in decl.quals:
+            print('not const')
+            return
+        const_type = ' '.join(decl.type.type.names)
+        self.visitor.visitConst(const_type, decl.name, decl.init.value)
         pass
 
-    def visit_Typename(self, n):
-        print("visit_Typename")
-        pass
-
-    def visit_ArrayDecl(self, n):
-        print("visit_ArrayDecl")
-        for c in n:
-            self.visit(c)
-        pass
-        
-    def visit_TypeDecl(self, n):
-        print("visit_TypeDecl")
-        # n.show()
-        # self._generate_type(n, emit_declname=False)
-        self.visit(n.type)
-        pass
-        
-    def visit_PtrDecl(self, n):
-        print("visit_PtrDecl")
-        pass
-
-    def visit_IdentifierType(self, n):
-        print("visit_IdentifierType ")
-        print(" ".join(n.names))
-        pass
 
     def generic_visit(self, node):
         """ Called if no explicit visitor function exists for a
@@ -102,14 +79,11 @@ class TypeVisitor(c_ast.NodeVisitor):
         if type(node) is type(None): 
             print("None type")
             return
-        # print(type(node))
+        print(type(node))
         for c in node:
             self.visit(c)
         pass
     
-
-
-
 # if __name__ == '__main__':
 #     a_s_t = CHeaderParser().parse("./struct.h")
 #     TypeVisitor().visit(a_s_t)
