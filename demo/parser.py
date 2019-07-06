@@ -48,7 +48,7 @@ class TypeVisitor(c_ast.NodeVisitor):
                 if decl.type is None or decl.type.type is None: continue
                 if isinstance(decl.type, c_ast.TypeDecl):
                     member_type = ' '.join(decl.type.type.names)
-                    self.visitor.visitStrcutMember(member_type, node.name)
+                    self.visitor.visitStrcutMember(member_type, decl.name)
                 elif isinstance(decl.type, c_ast.ArrayDecl):
                     member_type = ' '.join(decl.type.type.type.names)
                     print(decl.type)
